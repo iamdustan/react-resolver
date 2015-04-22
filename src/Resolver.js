@@ -179,7 +179,10 @@ export default class Resolver {
       resolver.freeze();
 
       var html = React.renderToString(context);
-      return { html, data };
+      return {
+        data: data,
+        toString() { return html; }
+      };
     });
   }
 
@@ -193,7 +196,10 @@ export default class Resolver {
       resolver.freeze();
 
       var html = React.renderToStaticMarkup(context);
-      return { html, data };
+      return {
+        data: data,
+        toString() { return html; }
+      };
     });
   }
 }
