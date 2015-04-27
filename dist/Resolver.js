@@ -84,7 +84,7 @@ var Resolver = (function () {
         throw new ReferenceError("" + container.constructor.displayName + " should have an ID");
       }
 
-      var state = this.states[id] || {
+      var state = this.states[id] || this.rehydrate(id) || {
         fulfilled: false,
         rejected: false,
         values: {} };
@@ -120,6 +120,14 @@ var Resolver = (function () {
       }
 
       throw new Error("" + this.constructor.displayName + " was rejected: " + error);
+    }
+  }, {
+    key: "rehydrate",
+    value: function rehydrate(id) {
+      if (typeof __resolver__ === "undefined") {
+        return null;
+      }
+      return __resolver__[id];
     }
   }, {
     key: "resolve",
@@ -235,10 +243,15 @@ var Resolver = (function () {
 
       _React2["default"].renderToString(context);
 
-      return resolver.finish().then(function () {
+      return resolver.finish().then(function (data) {
         resolver.freeze();
 
-        return _React2["default"].renderToString(context);
+        var html = _React2["default"].renderToString(context);
+        return {
+          data: resolver.states,
+          toString: function toString() {
+            return html;
+          } };
       });
     }
   }, {
@@ -253,10 +266,15 @@ var Resolver = (function () {
 
       _React2["default"].renderToStaticMarkup(context);
 
-      return resolver.finish().then(function () {
+      return resolver.finish().then(function (data) {
         resolver.freeze();
 
-        return _React2["default"].renderToStaticMarkup(context);
+        var html = _React2["default"].renderToStaticMarkup(context);
+        return {
+          data: resolver.states,
+          toString: function toString() {
+            return html;
+          } };
       });
     }
   }]);
