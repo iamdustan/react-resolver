@@ -158,7 +158,6 @@ export default class Resolver {
       }
     }
 
-    ComponentContainer.childContextTypes = props.childContextTypes;
     ComponentContainer.contextTypes = props.contextTypes;
     ComponentContainer.displayName = `${Component.displayName}Container`;
 
