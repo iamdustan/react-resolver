@@ -49,7 +49,7 @@ class Container extends React.Component {
 
     return {
       parent,
-      resolver,
+      resolver
     };
   }
 
@@ -104,10 +104,9 @@ class Container extends React.Component {
 
     if (!nextState.fulfilled) {
       this.getResolver().resolve(this, (finalState) => {
-        return this.setState(finalState);
-        /*return new Promise((resolve) => {
+        return new Promise((resolve) => {
           this.setState(finalState, resolve);
-        });*/
+        });
       });
     }
   }
@@ -115,12 +114,12 @@ class Container extends React.Component {
 
 Container.childContextTypes = {
   parent: React.PropTypes.instanceOf(Container),
-  resolver: React.PropTypes.object.isRequired,
+  resolver: React.PropTypes.object.isRequired
 };
 
 Container.contextTypes = {
   parent: React.PropTypes.instanceOf(Container),
-  resolver: React.PropTypes.object,
+  resolver: React.PropTypes.object
 };
 
 Container.displayName = "ResolverContainer";
@@ -129,7 +128,7 @@ Container.propTypes = {
   component: React.PropTypes.any,
   element: React.PropTypes.element,
   resolve: React.PropTypes.object,
-  resolver: React.PropTypes.object,
+  resolver: React.PropTypes.object
 };
 
 export default Container;

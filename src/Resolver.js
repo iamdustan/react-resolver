@@ -2,29 +2,53 @@ import React from "react";
 
 import Container from "./Container";
 import ResolverError from "./ResolverError";
+import {chan, take, put, go, timeout} from "../js-csp/src/csp"; /*eslint no-unused-vars:0 */
+
 
 export default class Resolver {
   constructor(states = {}) {
-    this.frozen = false;
-    this.promises = [];
     this.states = states;
   }
+  promises=[];
+  frozen=false;
+  awaitChan=chan();
 
-  await(promises = []) {
-    this.promises = this.promises.concat(promises);
-
-    return Promise.all(promises);
-  }
 
   finish(renderer, values=[]) {
-    const total = this.promises.length;
-    renderer();
-    if (this.promises.length > total) {
-      return Promise.all(this.promises).then((valueResults) => {
-        return this.finish(renderer, valueResults);
+     const self = this;
+    const innerFinish = (_values, resolve) =>
+    {
+      const total = self.promises.length;
+      renderer();
+      if (this.promises.length > total) {
+        go(function* (){
+          const vals = yield self.awaitChan;
+          innerFinish(_values.concat(vals), resolve);
+        });
+      }
+      else
+      {
+        resolve(values);
+      }
+    };
+
+
+    return new Promise(resolve=>innerFinish( values, resolve));
+  }
+
+  finishold(renderer, values=[]) {
+    //renderer();
+    const self = this;
+    const finishPromise = new Promise((resolve)=>{
+      //resolve([]);
+      go(function* (){
+        const vals = yield self.awaitChan;
+        //vals = [];
+        //resolve(vals); // self.awaitChan);
+        resolve(vals);
       });
-    }
-    return Promise.resolve(values);
+    });
+    return finishPromise;
   }
 
   freeze() {
@@ -40,6 +64,7 @@ export default class Resolver {
   }
 
   getContainerState(container) {
+
     const { id } = container;
 
     if (!id) {
@@ -49,7 +74,7 @@ export default class Resolver {
     const state = this.states[id] || this.rehydrate(id) || {
       fulfilled: false,
       rejected: false,
-      values: {},
+      values: {}
     };
 
     if (!this.states[id]) {
@@ -84,10 +109,11 @@ export default class Resolver {
     if (typeof __resolver__ === "undefined") {
       return null;
     }
-    return __resolver__[id];
+    return __resolver__[id]; /*eslint no-undef:0*/
   }
 
   resolve(container, callback) {
+    const self = this;
     const asyncProps = container.props.resolve || {};
     const state = this.getContainerState(container);
 
@@ -105,18 +131,20 @@ export default class Resolver {
       // Filter out pre-loaded values
       .filter((asyncProp) => {
         return !state.values.hasOwnProperty(asyncProp);
-      })
-    ;
+      });
 
     if (!asyncKeys.length) {
-      return Promise.resolve(this.fulfillState(state, callback));
+      this.fulfillState(state, callback);
+      go(function* (){
+        yield put(self.awaitChan, []);
+      });
     }
 
     if (this.frozen) {
       throw new ResolverError([
         "Resolver is frozen for server rendering.",
-        `${container.constructor.displayName} (#${container.id}) should have already resolved`,
-        `"${asyncKeys.join("\", \"")}". (http://git.io/vvvkr)`,
+        `${container.constructor.displayName} (#${container.id}) should have already resolved`//,
+        //`"${asyncKeys.join("\", \"")}". (http://git.io/vvvkr)`,
       ].join(" "));
     }
 
@@ -126,18 +154,25 @@ export default class Resolver {
         ? container.props[prop]
         : valueOf(container.props.props, container.props.context)
       ;
-
-      return Promise.resolve(value).then((resolved) => {
-        state.values[prop] = resolved;
-
-        return resolved;
-      });
+      return {prop, value};
     });
+    const {rejectState, fulfillState} = this;
+    this.promises = this.promises.concat(promises);
+    go(function* (){
+      try{
+        for(let promise of promises)
+        {
+          state.values[promise.prop] = promise.result = yield promise.value;
+        }
+        const toPut = promises.map(p=>p.result);
+        fulfillState.bind(self)(state, callback);
+        yield put(self.awaitChan, promises.filter(p=>p.result).map(p=>p.result));
+      }
+      catch(error){
+        rejectState.bind(self)(error, state, callback);
+      }
 
-    return this.await(promises).then(
-      () => this.fulfillState(state, callback),
-      (error) => this.rejectState(error, state, callback)
-    );
+    });
   }
 
   static createContainer(Component, props = {}) {
@@ -152,12 +187,12 @@ export default class Resolver {
             component={Component}
             context={this.context}
             props={this.props}
-            {...props}
-          />
+            {...props}/>
         );
       }
     }
 
+    ComponentContainer.childContextTypes = props.childContextTypes;
     ComponentContainer.contextTypes = props.contextTypes;
     ComponentContainer.displayName = `${Component.displayName}Container`;
 
