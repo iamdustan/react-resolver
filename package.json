@@ -19,10 +19,11 @@
     "react": "0.13.x"
   },
   "scripts": {
-    "build": "babel --out-dir dist/ src/",
+    "build": "babel --stage 0 --out-dir dist/ src/",
     "lint": "eslint src test",
     "prepublish": "npm run build",
-    "test": "npm run build && mocha"
+    "test": "npm run build && mocha",
+    "debug": "npm run build && mocha --debug-brk"
   },
   "repository": {
     "type": "git",
@@ -40,5 +41,7 @@
     "url": "https://github.com/ericclemmons/react-resolver/issues"
   },
   "homepage": "https://github.com/ericclemmons/react-resolver",
-  "dependencies": {}
+  "dependencies": {
+    "immutable": "^3.7.3"
+  }
 }

@@ -1,5 +1,5 @@
-import jsdom from "jsdom";
+require("babel/register")({
+  stage:0
+});
 
-global.document = jsdom.jsdom("<!DOCTYPE html><html><body></body></html>");
-global.navigator = { userAgent: "node.js" };
-global.window = document.parentWindow;
+require("./bootstrap2");

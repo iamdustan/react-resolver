@@ -2,8 +2,7 @@ import React from "react";
 
 import Container from "./Container";
 import ResolverError from "./ResolverError";
-import csp, {chan, alts, take, put, go, timeout} from "../js-csp/src/csp"; /*eslint no-unused-vars:0 */
-import {map} from "transducers.js";
+import csp, {chan, alts, take, put, go, timeout} from "./js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 const myRenderTo = (element, renderFunc) =>
   {

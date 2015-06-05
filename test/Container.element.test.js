@@ -1,10 +1,14 @@
 import assert from "assert";
-import { Container, Resolver } from "../dist";
-import React from "react";
+import { Container, Resolver } from "../src";
+import React, { Component} from "react/addons"; /* eslint no-unused-vars:0*/
+
+import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 import ContextFixture from "./support/ContextFixture";
 import PropsFixture from "./support/PropsFixture";
+
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
+
 
 describe("<Container />", function() {
   beforeEach(function() {
@@ -44,24 +48,25 @@ describe("<Container />", function() {
 
     describe(".resolve", function() {
       it("should resolve keys", function(done) {
-        const element = (
+        const element = 
           <Container component={PropsFixture} resolve={{
-            user: () => {
-              return new Promise((resolve) => {
-                setTimeout(() => resolve("Eric"), 0);
-              });
-            },
-          }} />
-        );
+            user: () => 
+              go(function* (){
+                  yield timeout(0);
+                  return "Eric";
+              })
+          }} />;
 
         const expected = React.renderToStaticMarkup(
           <PropsFixture user="Eric" />
         );
-
-        Resolver.renderToStaticMarkup(element).then((markup) => {
-          assert.equal(markup, expected);
+        go(function* (){
+          let markup= yield take(Resolver.renderToStaticMarkup(element));
+          assert.equal(expected,markup.toString());
           done();
-        }).catch(done);
+
+        });
+        
       });
 
       context("when keys are already defined in props", function() {
@@ -77,8 +82,7 @@ describe("<Container />", function() {
                 user: function() { throw new Error("`user` should not have been called"); },
               }}
               resolver={this.resolver}
-              {...this.props}
-            />
+              {...this.props}/>
           );
         });
 
@@ -90,8 +94,7 @@ describe("<Container />", function() {
                 user: function() { return "Waiting..."; },
               }}
               resolver={this.resolver}
-              {...this.props}
-            />
+              {...this.props}/>
           );
 
           assert.equal(actual, `<code>${JSON.stringify(this.props)}</code>`);
@@ -122,8 +125,7 @@ describe("<Container />", function() {
               resolve={{
                 user: function() { throw new Error("`user` should not have been called"); },
               }}
-              resolver={this.resolver}
-            />
+              resolver={this.resolver}/>
           );
         });
 
@@ -134,8 +136,7 @@ describe("<Container />", function() {
               resolve={{
                 user: function() { return "Waiting..."; },
               }}
-              resolver={this.resolver}
-            />
+              resolver={this.resolver}/>
           );
 
           assert.equal(actual, `<code>${JSON.stringify(global.__resolver__[".0"].values)}</code>`);

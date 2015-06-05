@@ -1,4 +1,4 @@
 import Fixture from "./Fixture";
-import { Resolver } from "../../dist";
+import { Resolver } from "../../src";
 
 export default Resolver.createContainer(Fixture);
