@@ -12,7 +12,6 @@ const myRenderTo = (element, renderFunc) =>
       return go(function* (){
         let html = yield resolver.finish(()=>renderFunc(context));
         resolver.freeze();
-        //var html = React.renderToStaticMarkup(context);
         return {
             data: resolver.states,
             toString() { return html; }
@@ -58,7 +57,6 @@ export default class Resolver {
     state.error = undefined;
     state.fulfilled = true;
     state.rejected = false;
-
     return callback ? callback(state) : state;
   }
 
@@ -163,7 +161,7 @@ export default class Resolver {
     go(function* (){
       try{
         //replace with alts
-        for(let channel of channels)
+        for(const channel of channels)
         {
           const result = channel.result = yield channel.value;
           if(Object.prototype.toString.call(result) === "[object Error]")
@@ -183,14 +181,29 @@ export default class Resolver {
       }
       if(!Resolver.server)
       {
-        const myChannels = channels.map(c=>c.value).concat([self.refreshChan]);
-        var channelResult;
-        while((channelResult = (yield alts(myChannels))).channel !== self.refreshChan)
-        {
-          let channel = channels[channels.map(c=>c.value).indexOf(channelResult.channel)]; /*eslint no-loop-func:0*/
-          state.values[channel.prop] = channel.result = channelResult.value;
-          fulfillState.bind(self)(state, callback);
-        }
+        //keep getting data from channels until the refreshchan gets closed
+        //keep getting data from channels until the refreshchan gets closed
+        go(function* process(cs){
+          const channelResult = yield alts(cs);
+          if(channelResult.channel !== self.refreshChan)
+          {
+            if(!channelResult.channel.closed)
+            {
+                  const channel = channels[channels.map(c=>c.value).indexOf(channelResult.channel)]; /*eslint no-loop-func:0*/
+                  if(channel)
+                  {
+                      state.values[channel.prop] = channel.result = channelResult.value;
+                      fulfillState.bind(self)(state, callback);
+                  }
+                  yield go(process, [cs]);
+            }
+            else
+            {
+              //if channel is closed remove it from the list of channels we are monitoring
+              yield go(process, [cs.filter(c=>c !== channelResult.channel)]);
+            }
+          }
+        }, [channels.map(c=>c.value).concat([self.refreshChan])]);
       }
     });
   }
@@ -220,7 +233,7 @@ export default class Resolver {
   }
 
   static render(element, node, instance = new Resolver()) {
-    Resolver.server=false;
+    Resolver.server = false;
     React.render((
       <Container resolver={instance}>
         {element}

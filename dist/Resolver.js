@@ -144,7 +144,6 @@ var Resolver = (function () {
       state.error = undefined;
       state.fulfilled = true;
       state.rejected = false;
-
       return callback ? callback(state) : state;
     }
   }, {
@@ -271,7 +270,7 @@ var Resolver = (function () {
 
       this.channels = this.channels.concat(channels);
       (0, _jsCspSrcCsp.go)(regeneratorRuntime.mark(function callee$2$0() {
-        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, channel, result, myChannels, channelResult;
+        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, channel, result;
 
         return regeneratorRuntime.wrap(function callee$2$0$(context$3$0) {
           while (1) switch (context$3$0.prev = context$3$0.next) {
@@ -371,37 +370,62 @@ var Resolver = (function () {
               rejectState.bind(self)(context$3$0.t1, state, callback);
 
             case 40:
-              if (Resolver.server) {
-                context$3$0.next = 51;
-                break;
+              if (!Resolver.server) {
+                //keep getting data from channels until the refreshchan gets closed
+                //keep getting data from channels until the refreshchan gets closed
+                (0, _jsCspSrcCsp.go)(regeneratorRuntime.mark(function process(cs) {
+                  var channelResult, channel;
+                  return regeneratorRuntime.wrap(function process$(context$4$0) {
+                    while (1) switch (context$4$0.prev = context$4$0.next) {
+                      case 0:
+                        context$4$0.next = 2;
+                        return (0, _jsCspSrcCsp.alts)(cs);
+
+                      case 2:
+                        channelResult = context$4$0.sent;
+
+                        if (!(channelResult.channel !== self.refreshChan)) {
+                          context$4$0.next = 13;
+                          break;
+                        }
+
+                        if (channelResult.channel.closed) {
+                          context$4$0.next = 11;
+                          break;
+                        }
+
+                        channel = channels[channels.map(function (c) {
+                          return c.value;
+                        }).indexOf(channelResult.channel)];
+                        /*eslint no-loop-func:0*/
+                        if (channel) {
+                          state.values[channel.prop] = channel.result = channelResult.value;
+                          fulfillState.bind(self)(state, callback);
+                        }
+                        context$4$0.next = 9;
+                        return (0, _jsCspSrcCsp.go)(process, [cs]);
+
+                      case 9:
+                        context$4$0.next = 13;
+                        break;
+
+                      case 11:
+                        context$4$0.next = 13;
+                        return (0, _jsCspSrcCsp.go)(process, [cs.filter(function (c) {
+                          return c !== channelResult.channel;
+                        })]);
+
+                      case 13:
+                      case "end":
+                        return context$4$0.stop();
+                    }
+                  }, process, this);
+                }), [channels.map(function (c) {
+                  return c.value;
+                }).concat([self.refreshChan])]);
               }
 
-              myChannels = channels.map(function (c) {
-                return c.value;
-              }).concat([self.refreshChan]);
-
-            case 42:
-              context$3$0.next = 44;
-              return (0, _jsCspSrcCsp.alts)(myChannels);
-
-            case 44:
-              context$3$0.t2 = (channelResult = context$3$0.sent).channel;
-
-              if (!(context$3$0.t2 !== self.refreshChan)) {
-                context$3$0.next = 51;
-                break;
-              }
-
-              channel = channels[channels.map(function (c) {
-                return c.value;
-              }).indexOf(channelResult.channel)];
-              /*eslint no-loop-func:0*/
-              state.values[channel.prop] = channel.result = channelResult.value;
-              fulfillState.bind(self)(state, callback);
-              context$3$0.next = 42;
-              break;
-
-            case 51:
+            case 41:
             case "end":
               return context$3$0.stop();
           }
@@ -479,7 +503,8 @@ var Resolver = (function () {
 
 exports["default"] = Resolver;
 module.exports = exports["default"];
-//var html = React.renderToStaticMarkup(context);
 /*eslint no-constant-condition:0*/
 
 //replace with alts
+
+//if channel is closed remove it from the list of channels we are monitoring
