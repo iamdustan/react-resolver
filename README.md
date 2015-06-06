@@ -41,6 +41,38 @@ describe("Resolver", function() {
     });
   });
 });
+
+describe("Resolver", function() {
+  describe(".dom", function() {
+    it("should render a channel into dom", function(done) {
+        const ch = chan();
+        @dataDependencies({
+            user: ()=>ch
+        }) 
+        @displayName("TestElement")
+        class Element extends Component {
+            render(){
+                return <span>{this.props.user}</span>;
+            }
+        };
+        const resolver = new Resolver(); 
+        Resolver.render(
+            <Element/>
+            , document.body, resolver);
+
+         go(function* (){
+            yield put(ch,"Ernie");
+            yield timeout(0);
+            assert.equal(document.querySelector('span').innerHTML, 'Ernie');
+            yield put(ch,"Wise");
+            yield timeout(0);
+            assert.equal(document.querySelector('span').innerHTML, 'Wise');
+            done();
+         });     
+    });
+  });
+});
+
 ````
 ## Current problem
 js-csp seems to operate slightly differently when built than when run with babel/require

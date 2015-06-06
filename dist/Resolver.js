@@ -271,7 +271,7 @@ var Resolver = (function () {
 
       this.channels = this.channels.concat(channels);
       (0, _jsCspSrcCsp.go)(regeneratorRuntime.mark(function callee$2$0() {
-        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, channel, result, toPut, myChannels, channelResult;
+        var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, channel, result, myChannels, channelResult;
 
         return regeneratorRuntime.wrap(function callee$2$0$(context$3$0) {
           while (1) switch (context$3$0.prev = context$3$0.next) {
@@ -346,37 +346,33 @@ var Resolver = (function () {
               return context$3$0.finish(23);
 
             case 31:
-              toPut = channels.map(function (p) {
-                return p.result;
-              });
-
               fulfillState.bind(self)(state, callback);
 
               if (!Resolver.server) {
-                context$3$0.next = 36;
+                context$3$0.next = 35;
                 break;
               }
 
-              context$3$0.next = 36;
+              context$3$0.next = 35;
               return (0, _jsCspSrcCsp.put)(self.awaitChan, channels.filter(function (p) {
                 return p.result;
               }).map(function (p) {
                 return p.result;
               }));
 
-            case 36:
-              context$3$0.next = 41;
+            case 35:
+              context$3$0.next = 40;
               break;
 
-            case 38:
-              context$3$0.prev = 38;
+            case 37:
+              context$3$0.prev = 37;
               context$3$0.t1 = context$3$0["catch"](0);
 
               rejectState.bind(self)(context$3$0.t1, state, callback);
 
-            case 41:
+            case 40:
               if (Resolver.server) {
-                context$3$0.next = 52;
+                context$3$0.next = 51;
                 break;
               }
 
@@ -384,15 +380,15 @@ var Resolver = (function () {
                 return c.value;
               }).concat([self.refreshChan]);
 
-            case 43:
-              context$3$0.next = 45;
+            case 42:
+              context$3$0.next = 44;
               return (0, _jsCspSrcCsp.alts)(myChannels);
 
-            case 45:
+            case 44:
               context$3$0.t2 = (channelResult = context$3$0.sent).channel;
 
               if (!(context$3$0.t2 !== self.refreshChan)) {
-                context$3$0.next = 52;
+                context$3$0.next = 51;
                 break;
               }
 
@@ -402,14 +398,14 @@ var Resolver = (function () {
               /*eslint no-loop-func:0*/
               state.values[channel.prop] = channel.result = channelResult.value;
               fulfillState.bind(self)(state, callback);
-              context$3$0.next = 43;
+              context$3$0.next = 42;
               break;
 
-            case 52:
+            case 51:
             case "end":
               return context$3$0.stop();
           }
-        }, callee$2$0, this, [[0, 38], [4, 19, 23, 31], [24,, 26, 30]]);
+        }, callee$2$0, this, [[0, 37], [4, 19, 23, 31], [24,, 26, 30]]);
       }));
     }
   }], [{
@@ -457,6 +453,7 @@ var Resolver = (function () {
     value: function render(element, node) {
       var instance = arguments[2] === undefined ? new Resolver() : arguments[2];
 
+      Resolver.server = false;
       _react2["default"].render(_react2["default"].createElement(
         _Container2["default"],
         { resolver: instance },
@@ -484,3 +481,5 @@ exports["default"] = Resolver;
 module.exports = exports["default"];
 //var html = React.renderToStaticMarkup(context);
 /*eslint no-constant-condition:0*/
+
+//replace with alts

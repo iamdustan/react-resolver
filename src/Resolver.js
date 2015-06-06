@@ -162,6 +162,7 @@ export default class Resolver {
     this.channels = this.channels.concat(channels);
     go(function* (){
       try{
+        //replace with alts
         for(let channel of channels)
         {
           const result = channel.result = yield channel.value;
@@ -171,7 +172,6 @@ export default class Resolver {
           }
           state.values[channel.prop] = channel.result;// = result;
         }
-        const toPut = channels.map(p=>p.result);
         fulfillState.bind(self)(state, callback);
         if(Resolver.server)
         {
@@ -220,6 +220,7 @@ export default class Resolver {
   }
 
   static render(element, node, instance = new Resolver()) {
+    Resolver.server=false;
     React.render((
       <Container resolver={instance}>
         {element}

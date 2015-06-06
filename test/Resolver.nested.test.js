@@ -1,12 +1,14 @@
 import assert from "assert";
-import React, {Component} from "react";
+import React, {Component} from "react/addons";
 import { Resolver } from "../src";
 import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
+import jsdom from "jsdom";
 
 import displayName from "./decorators/displayName";
 import dataDependencies from "./decorators/dataDependencies";
+
 
 
 
@@ -45,6 +47,44 @@ describe("Resolver", function() {
         go(function*(){
             const string = yield Resolver.renderToStaticMarkup(<Element />);
             assert.equal("<span>Eric<span>Ernie</span></span>",string.toString());
+            done();
+        });
+    });
+
+
+    it("should render nested elements passing props", function(done) {
+        @dataDependencies({
+          friendship: (props)=>
+            go(function* (){
+              return `Ernie likes ${props.friend}`;
+            })
+        })
+        @displayName("TestElement1")
+        class Element1 extends Component {
+            render(){
+                return <span>{this.props.friendship}</span>;
+            }
+        };
+
+        @dataDependencies({
+          users: ()=>
+            go(function* (){
+              return ["Eric","Jim"];
+            })
+        })
+        @displayName("TestElement")
+        class Element extends Component {
+            render(){
+                return <span>{this.props.users.map(user=>
+                    <span key={user}>
+                        <Element1 friend={user}/>
+                    </span>
+                )}</span>;
+            }
+        };
+        go(function*(){
+            const string = yield Resolver.renderToStaticMarkup(<Element />);
+            assert.equal("<span><span><span>Ernie likes Eric</span></span><span><span>Ernie likes Jim</span></span></span>",string.toString());
             done();
         });
     });
