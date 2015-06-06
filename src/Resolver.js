@@ -10,7 +10,7 @@ const myRenderTo = (element, renderFunc) =>
       const resolver = new Resolver(); /*eslint no-use-before-define:0*/
       const context = <Container resolver={resolver}>{element}</Container>;
       return go(function* (){
-        let html = yield resolver.finish(()=>renderFunc(context));
+        const html = yield resolver.finish(()=>renderFunc(context));
         resolver.freeze();
         return {
             data: resolver.states,
@@ -18,7 +18,6 @@ const myRenderTo = (element, renderFunc) =>
           };
       });
    };
-
 
 export default class Resolver {
   constructor(states = {}) {
@@ -29,24 +28,17 @@ export default class Resolver {
   awaitChan=chan();
   refreshChan=chan();
 
-  finish(renderer, values=[]) {
-    const self = this;
-    return go(function* (){
-      var total = self.channels.length;
-      while(true)  /*eslint no-constant-condition:0*/
+  //channel that completes with result of renderer when all channels resolved
+  finish(renderer) {
+    return go(function* process(total){
+      const rendered = renderer();
+      if(this.channels.length === total)
       {
-        renderer();
-        if(self.channels.length > total)
-        {
-          total = self.channels.length;
-          values = values.concat(yield self.awaitChan);
-        }
-        else
-        {
-          return renderer();
-        }
+        return rendered;
       }
-    });
+      yield this.awaitChan;
+      return yield go(process.bind(this), [this.channels.length]);
+    }.bind(this), [this.channels.length]);
   }
 
   freeze() {
@@ -252,5 +244,3 @@ export default class Resolver {
   }
 
 }
-
-

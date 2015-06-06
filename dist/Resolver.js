@@ -85,53 +85,40 @@ var Resolver = (function () {
 
   _createClass(Resolver, [{
     key: "finish",
-    value: function finish(renderer) {
-      var values = arguments[1] === undefined ? [] : arguments[1];
 
-      var self = this;
-      return (0, _jsCspSrcCsp.go)(regeneratorRuntime.mark(function callee$2$0() {
-        var total;
-        return regeneratorRuntime.wrap(function callee$2$0$(context$3$0) {
+    //channel that completes with result of renderer when all channels resolved
+    value: function finish(renderer) {
+      return (0, _jsCspSrcCsp.go)(regeneratorRuntime.mark(function process(total) {
+        var rendered;
+        return regeneratorRuntime.wrap(function process$(context$3$0) {
           while (1) switch (context$3$0.prev = context$3$0.next) {
             case 0:
-              total = self.channels.length;
+              rendered = renderer();
 
-            case 1:
-              if (!true) {
-                context$3$0.next = 14;
+              if (!(this.channels.length === total)) {
+                context$3$0.next = 3;
                 break;
               }
 
-              renderer();
+              return context$3$0.abrupt("return", rendered);
 
-              if (!(self.channels.length > total)) {
-                context$3$0.next = 11;
-                break;
-              }
+            case 3:
+              context$3$0.next = 5;
+              return this.awaitChan;
 
-              total = self.channels.length;
+            case 5:
               context$3$0.next = 7;
-              return self.awaitChan;
+              return (0, _jsCspSrcCsp.go)(process.bind(this), [this.channels.length]);
 
             case 7:
-              context$3$0.t0 = context$3$0.sent;
-              values = values.concat(context$3$0.t0);
-              context$3$0.next = 12;
-              break;
+              return context$3$0.abrupt("return", context$3$0.sent);
 
-            case 11:
-              return context$3$0.abrupt("return", renderer());
-
-            case 12:
-              context$3$0.next = 1;
-              break;
-
-            case 14:
+            case 8:
             case "end":
               return context$3$0.stop();
           }
-        }, callee$2$0, this);
-      }));
+        }, process, this);
+      }).bind(this), [this.channels.length]);
     }
   }, {
     key: "freeze",
@@ -503,7 +490,6 @@ var Resolver = (function () {
 
 exports["default"] = Resolver;
 module.exports = exports["default"];
-/*eslint no-constant-condition:0*/
 
 //replace with alts
 
