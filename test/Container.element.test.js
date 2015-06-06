@@ -47,16 +47,15 @@ describe("<Container />", function() {
     });
 
     describe(".resolve", function() {
+      const element = 
+        <Container component={PropsFixture} resolve={{
+          user: () => 
+            go(function* (){
+                yield timeout(0);
+                return "Eric";
+            })
+        }} />;
       it("should resolve keys", function(done) {
-        const element = 
-          <Container component={PropsFixture} resolve={{
-            user: () => 
-              go(function* (){
-                  yield timeout(0);
-                  return "Eric";
-              })
-          }} />;
-
         const expected = React.renderToStaticMarkup(
           <PropsFixture user="Eric" />
         );
@@ -64,11 +63,28 @@ describe("<Container />", function() {
           let markup= yield take(Resolver.renderToStaticMarkup(element));
           assert.equal(expected,markup.toString());
           done();
-
-        });
-        
+        });        
       });
+      
+      it("should resolve a key where the channel closes", function(done) {
+        const element = 
+          <Container component={PropsFixture} resolve={{
+            user: () => 
+              go(function* (){
+                  yield timeout(0);
+              })
+          }} />;
 
+        const expected = React.renderToStaticMarkup(
+          <PropsFixture user={undefined} />
+        );
+        go(function* (){
+          let markup= yield take(Resolver.renderToStaticMarkup(element));
+          console.log(markup.toString());
+          assert.equal(expected,markup.toString());
+          done();
+        });        
+      });
       context("when keys are already defined in props", function() {
         before(function() {
           this.props = { user: "Exists" };

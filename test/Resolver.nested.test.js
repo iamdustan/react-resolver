@@ -1,10 +1,19 @@
-# React Resolver ![https://img.shields.io/npm/v/react-resolver.svg](https://img.shields.io/npm/v/react-resolver.svg?style=flat-square)
+import assert from "assert";
+import React, {Component} from "react";
+import { Resolver } from "../src";
+import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
-> Isomorphic library to lazy-load data for React components
+import PropsFixtureContainer from "./support/PropsFixtureContainer";
 
-Forked and nodified to use CSP channels rather than promises
+import displayName from "./decorators/displayName";
+import dataDependencies from "./decorators/dataDependencies";
 
-````
+
+
+
+
+
+
 describe("Resolver", function() {
   describe(".nested", function() {
     it("should render nested elements", function(done) {
@@ -41,16 +50,3 @@ describe("Resolver", function() {
     });
   });
 });
-````
-## Current problem
-js-csp seems to operate slightly differently when built than when run with babel/require
-
-## Development
-
-If you'd like to contribute to this project, all you need to do is clone
-this project and run:
-
-```shell
-$ npm install
-$ npm test
-```
