@@ -1,11 +1,11 @@
 import assert from "assert";
 import React from "react";
-import { Resolver } from "../src";
+import { Resolver } from "../dist";
 
 import Fixture from "./support/Fixture";
 import FixtureContainer from "./support/FixtureContainer";
 
-import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
+import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 describe("Resolver", function() {
   describe(".createContainer", function() {

@@ -1,10 +1,10 @@
 import assert from "assert";
-import { Resolver } from "../src";
+import { Resolver } from "../dist";
 import React from "react";
 
 import PropsFixture from "./support/PropsFixture";
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
-import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
+import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 describe("Resolver", function() {
   describe(".renderToStaticMarkup", function() {

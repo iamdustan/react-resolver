@@ -1,8 +1,8 @@
 import assert from "assert";
-import { Container, Resolver } from "../src";
+import { Container, Resolver } from "../dist";
 import React, { Component} from "react/addons"; /* eslint no-unused-vars:0*/
 
-import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
+import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 import ContextFixture from "./support/ContextFixture";
 import PropsFixture from "./support/PropsFixture";

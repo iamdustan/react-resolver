@@ -290,7 +290,7 @@ var Resolver = (function () {
               throw result;
 
             case 13:
-              state.values[channel.prop] = channel.result; // = result;
+              state.values[channel.prop] = channel.result;
 
             case 14:
               _iteratorNormalCompletion = true;
@@ -358,7 +358,6 @@ var Resolver = (function () {
 
             case 40:
               if (!Resolver.server) {
-                //keep getting data from channels until the refreshchan gets closed
                 //keep getting data from channels until the refreshchan gets closed
                 (0, _jsCspSrcCsp.go)(regeneratorRuntime.mark(function process(cs) {
                   var channelResult, channel;

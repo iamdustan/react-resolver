@@ -1,9 +1,9 @@
 import assert from "assert";
-import exported from "../src";
+import exported from "../dist";
 
-import Container from "../src/Container";
-import Resolver from "../src/Resolver";
-import ResolverError from "../src/ResolverError";
+import Container from "../dist/Container";
+import Resolver from "../dist/Resolver";
+import ResolverError from "../dist/ResolverError";
 
 describe("exports", function() {
   it("should only specify `Container`, `Error`, & `Resolver`", function() {

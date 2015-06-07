@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Container } from "../src";
+import { Container } from "../dist";
 
 import React from "react";
 

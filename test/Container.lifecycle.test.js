@@ -1,6 +1,6 @@
 import assert from "assert";
 import cloneWithProps from "react/lib/cloneWithProps";
-import { Container, Resolver } from "../src";
+import { Container, Resolver } from "../dist";
 import React from "react";
 
 import PropsFixtureContainer from "./support/PropsFixtureContainer";

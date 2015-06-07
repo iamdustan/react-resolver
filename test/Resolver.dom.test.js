@@ -1,7 +1,7 @@
 import assert from "assert";
 import React, {Component} from "react/addons";
-import { Resolver } from "../src";
-import csp, {chan, alts, take, put, go, timeout} from "../src/js-csp/src/csp"; /*eslint no-unused-vars:0 */
+import { Resolver } from "../dist";
+import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
 import jsdom from "jsdom";

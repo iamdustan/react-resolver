@@ -160,7 +160,7 @@ export default class Resolver {
           {
             throw result;
           }
-          state.values[channel.prop] = channel.result;// = result;
+          state.values[channel.prop] = channel.result;
         }
         fulfillState.bind(self)(state, callback);
         if(Resolver.server)
@@ -173,7 +173,6 @@ export default class Resolver {
       }
       if(!Resolver.server)
       {
-        //keep getting data from channels until the refreshchan gets closed
         //keep getting data from channels until the refreshchan gets closed
         go(function* process(cs){
           const channelResult = yield alts(cs);
