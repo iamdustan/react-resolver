@@ -1,6 +1,6 @@
 # React Resolver Csp
 
-[![Build Status](https://travis-ci.org/gilesbradshaw/react-resolver.svg?branch=csp)](https://travis-ci.org/gilesbradshaw/react-resolver)
+[![Build Status](https://travis-ci.org/gilesbradshaw/react-resolver-csp.svg?branch=csp)](https://travis-ci.org/gilesbradshaw/react-resolver-csp)
 
 ## Isomorphic library to lazy-load data for React components
 
