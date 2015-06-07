@@ -1,7 +1,7 @@
 {
   "name": "react-resolver-csp",
   "version": "0.0.1",
-  "description": "Isomorphic library to lazy-load data for React components",
+  "description": "Isomorphic library to lazy-load data for React components with csp",
   "main": "dist/index.js",
   "directories": {
     "test": "test"
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/gilesbradshaw/react-resolver.git"
+    "url": "git://github.com/gilesbradshaw/react-resolver-csp.git"
   },
   "keywords": [
     "react",
