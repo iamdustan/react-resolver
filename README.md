@@ -8,6 +8,8 @@
 
 Forked and nodified to use CSP channels rather than promises
 
+I've manually included js-csp so the whole lot gets transpiled to ES5
+
 ````
 describe("Resolver", function() {
   describe(".nested", function() {
