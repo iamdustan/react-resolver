@@ -92,4 +92,4 @@ $ npm test
 
 ## Credits
 
-[Based on](https://github.com/ericclemmons/react-resolver) 
+[Based on ericclemmons/react-resolver](https://github.com/ericclemmons/react-resolver)  and [iamdustan/react-resolver](https://github.com/iamdustan/react-resolver)
