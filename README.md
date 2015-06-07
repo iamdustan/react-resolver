@@ -1,4 +1,6 @@
-# React Resolver ![https://img.shields.io/npm/v/react-resolver.svg](https://img.shields.io/npm/v/react-resolver.svg?style=flat-square)
+# React Resolver 
+
+[![Build Status](https://travis-ci.org/gilesbradshaw/react-resolver.svg)](https://travis-ci.org/gilesbradshaw/react-resolver)
 
 > Isomorphic library to lazy-load data for React components
 
