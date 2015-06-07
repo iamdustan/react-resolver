@@ -1,4 +1,4 @@
-import {Resolver} from "../../dist/index";
+import {Resolver} from "../index";
 
 export default (resolve)=>
     (target)=> Resolver.createContainer(target, {resolve});

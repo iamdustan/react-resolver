@@ -4,12 +4,14 @@ import exported from "../dist";
 import Container from "../dist/Container";
 import Resolver from "../dist/Resolver";
 import ResolverError from "../dist/ResolverError";
+import decorators from "../dist/decorators";
+import csp from "../dist/js-csp";
 
 describe("exports", function() {
-  it("should only specify `Container`, `Error`, & `Resolver`", function() {
+  it("should only specify `Container`, `Error`, `Resolver`, `csp` & `decorators`", function() {
     const keys = Object.keys(exported);
 
-    assert.deepEqual(keys, ["Container", "Error", "Resolver"]);
+    assert.deepEqual(keys, ["Container", "Error", "Resolver", "csp", "decorators"]);
   });
 
   describe(".Container", function() {
@@ -30,6 +32,20 @@ describe("exports", function() {
     it("should be Resolver", function() {
       assert(exported.Resolver);
       assert.equal(exported.Resolver, Resolver);
+    });
+  });
+
+  describe(".csp", function() {
+    it("should be csp", function() {
+      assert(exported.csp);
+      assert.equal(exported.csp, csp);
+    });
+  });
+
+  describe(".decorators", function() {
+    it("should be decorators", function() {
+      assert(exported.decorators);
+      assert.equal(exported.decorators, decorators);
     });
   });
 });

@@ -14,6 +14,16 @@ var _ResolverError = require("./ResolverError");
 
 var _ResolverError2 = _interopRequireDefault(_ResolverError);
 
+var _decoratorsIndex = require("./decorators/index");
+
+var _decoratorsIndex2 = _interopRequireDefault(_decoratorsIndex);
+
+var _jsCsp = require("./js-csp");
+
+var _jsCsp2 = _interopRequireDefault(_jsCsp);
+
 module.exports.Container = _Container2["default"];
 module.exports.Error = _ResolverError2["default"];
 module.exports.Resolver = _Resolver2["default"];
+module.exports.csp = _jsCsp2["default"];
+module.exports.decorators = _decoratorsIndex2["default"];

@@ -6,8 +6,8 @@ import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp/src/csp"; 
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
 import jsdom from "jsdom";
 
-import displayName from "./decorators/displayName";
-import dataDependencies from "./decorators/dataDependencies";
+import {displayName, dataDependencies}  from "../dist/decorators";
+
 
 
 
