@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/gilesbradshaw/react-resolver-csp.svg?branch=csp)](https://travis-ci.org/gilesbradshaw/react-resolver-csp)
 
+[![Coverage Status](https://coveralls.io/repos/gilesbradshaw/react-resolver-csp/badge.svg?branch=csp)](https://coveralls.io/r/gilesbradshaw/react-resolver-csp)
+
 ## Isomorphic library to lazy-load data for React components
 
 Forked and nodified to use CSP channels rather than promises
