@@ -1,8 +1,8 @@
-# React Resolver 
+# React Resolver Csp
 
 [![Build Status](https://travis-ci.org/gilesbradshaw/react-resolver.svg?branch=csp)](https://travis-ci.org/gilesbradshaw/react-resolver)
 
-> Isomorphic library to lazy-load data for React components
+## Isomorphic library to lazy-load data for React components
 
 Forked and nodified to use CSP channels rather than promises
 
@@ -76,9 +76,6 @@ describe("Resolver", function() {
 });
 
 ````
-## Current problem
-js-csp seems to operate slightly differently when built than when run with babel/require
-
 ## Development
 
 If you'd like to contribute to this project, all you need to do is clone
@@ -88,3 +85,7 @@ this project and run:
 $ npm install
 $ npm test
 ```
+
+## Credits
+
+[Based on](https://github.com/ericclemmons/react-resolver) 
