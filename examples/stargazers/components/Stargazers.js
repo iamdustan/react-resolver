@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
-
 import { Resolver } from "react-resolver";
+import { Link } from "react-router";
 
 class Stargazers extends React.Component {
   render() {
@@ -16,7 +16,8 @@ class Stargazers extends React.Component {
           </div>
           <div className="card-action">
             <iframe src="https://ghbtns.com/github-btn.html?user=ericclemmons&repo=react-resolver&type=star&count=true" frameBorder="0" scrolling="0" width="100px" height="20px"></iframe>
-            <iframe src="https://ghbtns.com/github-btn.html?user=ericclemmons&repo=react-resolver&type=watch&count=true&v=2" frameBorder="0" scrolling="0" width="60px" height="20px"></iframe>
+            <iframe src="https://ghbtns.com/github-btn.html?user=ericclemmons&repo=react-resolver&type=watch&count=true&v=2" frameBorder="0" scrolling="0" width="80px" height="20px"></iframe>
+            <iframe src="https://ghbtns.com/github-btn.html?user=ericclemmons&type=follow&count=true" frameBorder="0" scrolling="0" width="150px" height="20px"></iframe>
           </div>
         </div>
 
@@ -42,11 +43,11 @@ class Stargazers extends React.Component {
   renderUser(user) {
     return (
       <div key={user.id} className="center-align">
-        <a href={`https://github.com/${user.login}`} target="_blank">
+        <Link to="user" params={{ login: user.login }}>
           <img src={user.avatar_url} alt="" className="circle responsive-img z-depth-1" />
           <br />
           {user.login}
-        </a>
+        </Link>
       </div>
     );
   }

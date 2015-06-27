@@ -1,5 +1,6 @@
 import assert from "assert";
 import { Container } from "../dist";
+
 import React from "react";
 
 import Fixture from "./support/Fixture";

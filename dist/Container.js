@@ -1,29 +1,32 @@
 "use strict";
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { "default": obj }; };
-
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _React = require("react/addons");
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _React2 = _interopRequireWildcard(_React);
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactLibCloneWithProps = require("react/lib/cloneWithProps");
+
+var _reactLibCloneWithProps2 = _interopRequireDefault(_reactLibCloneWithProps);
 
 var _ResolverError = require("./ResolverError");
 
-var _ResolverError2 = _interopRequireWildcard(_ResolverError);
+var _ResolverError2 = _interopRequireDefault(_ResolverError);
 
-var Children = _React2["default"].Children;
-var cloneWithProps = _React2["default"].addons.cloneWithProps;
+var Children = _react2["default"].Children;
 
 var Container = (function (_React$Component) {
   function Container(props, context) {
@@ -42,15 +45,19 @@ var Container = (function (_React$Component) {
   _createClass(Container, [{
     key: "componentWillMount",
     value: function componentWillMount() {
-      var _this = this;
+      this.resolve();
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.getResolver().clearContainerState(this);
+    }
+  }, {
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps() {
+      this.getResolver().clearContainerState(this);
 
-      if (!this.state.fulfilled) {
-        this.getResolver().resolve(this, function (state) {
-          return new Promise(function (resolve) {
-            _this.setState(state, resolve);
-          });
-        });
-      }
+      this.resolve();
     }
   }, {
     key: "getId",
@@ -75,7 +82,8 @@ var Container = (function (_React$Component) {
 
       return {
         parent: parent,
-        resolver: resolver };
+        resolver: resolver
+      };
     }
   }, {
     key: "getResolver",
@@ -91,56 +99,88 @@ var Container = (function (_React$Component) {
   }, {
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(props, state) {
-      return state.fulfilled;
+      return state.fulfilled || state.error || false;
     }
   }, {
     key: "render",
     value: function render() {
+      if (this.state.error) {
+        if (this.props.component && this.props.component.errorRender) {
+          return this.props.component.errorRender(this.state);
+        } else {
+          return false;
+        }
+      }
       if (!this.state.fulfilled) {
-        return false;
+        if (this.props.component && this.props.component.waitRender) {
+          return this.props.component.waitRender(this.state);
+        } else {
+          return false;
+        }
       }
 
       if (this.props.component) {
-        return _React2["default"].createElement(this.props.component, this.state.values);
+        return _react2["default"].createElement(this.props.component, this.state.values);
       }
 
       if (this.props.element) {
-        return cloneWithProps(this.props.element);
+        return (0, _reactLibCloneWithProps2["default"])(this.props.element);
       }
 
       if (this.props.children) {
         if (Children.count(this.props.children) === 1) {
-          return cloneWithProps(Children.only(this.props.children));
+          return (0, _reactLibCloneWithProps2["default"])(Children.only(this.props.children));
         }
-        return _React2["default"].createElement(
+
+        return _react2["default"].createElement(
           "span",
           null,
-          Children.map(this.props.children, cloneWithProps)
+          Children.map(this.props.children, _reactLibCloneWithProps2["default"])
         );
       }
 
       throw new _ResolverError2["default"]("<Container /> requires one of the following props to render: `element`, `component`, or `children`");
     }
+  }, {
+    key: "resolve",
+    value: function resolve() {
+      var _this = this;
+
+      var nextState = this.getResolver().getContainerState(this);
+
+      this.setState(nextState);
+
+      if (!nextState.fulfilled) {
+        this.getResolver().resolve(this, function (finalState) {
+          return new Promise(function (resolve) {
+            _this.setState(finalState, resolve);
+          });
+        });
+      }
+    }
   }]);
 
   return Container;
-})(_React2["default"].Component);
+})(_react2["default"].Component);
 
 Container.childContextTypes = {
-  parent: _React2["default"].PropTypes.instanceOf(Container),
-  resolver: _React2["default"].PropTypes.object.isRequired };
+  parent: _react2["default"].PropTypes.instanceOf(Container),
+  resolver: _react2["default"].PropTypes.object.isRequired
+};
 
 Container.contextTypes = {
-  parent: _React2["default"].PropTypes.instanceOf(Container),
-  resolver: _React2["default"].PropTypes.object };
+  parent: _react2["default"].PropTypes.instanceOf(Container),
+  resolver: _react2["default"].PropTypes.object
+};
 
 Container.displayName = "ResolverContainer";
 
 Container.propTypes = {
-  component: _React2["default"].PropTypes.any,
-  element: _React2["default"].PropTypes.element,
-  resolve: _React2["default"].PropTypes.object,
-  resolver: _React2["default"].PropTypes.object };
+  component: _react2["default"].PropTypes.any,
+  element: _react2["default"].PropTypes.element,
+  resolve: _react2["default"].PropTypes.object,
+  resolver: _react2["default"].PropTypes.object
+};
 
 exports["default"] = Container;
 module.exports = exports["default"];

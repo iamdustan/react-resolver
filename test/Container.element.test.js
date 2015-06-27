@@ -1,10 +1,14 @@
 import assert from "assert";
 import { Container, Resolver } from "../dist";
-import React from "react";
+import React, { Component} from "react/addons"; /* eslint no-unused-vars:0*/
+
+import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp/src/csp"; /*eslint no-unused-vars:0 */
 
 import ContextFixture from "./support/ContextFixture";
 import PropsFixture from "./support/PropsFixture";
+
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
+
 
 describe("<Container />", function() {
   beforeEach(function() {
@@ -43,27 +47,44 @@ describe("<Container />", function() {
     });
 
     describe(".resolve", function() {
+      const element = 
+        <Container component={PropsFixture} resolve={{
+          user: () => 
+            go(function* (){
+                yield timeout(0);
+                return "Eric";
+            })
+        }} />;
       it("should resolve keys", function(done) {
-        const element = (
-          <Container component={PropsFixture} resolve={{
-            user: () => {
-              return new Promise((resolve) => {
-                setTimeout(() => resolve("Eric"), 0);
-              });
-            },
-          }} />
-        );
-
         const expected = React.renderToStaticMarkup(
           <PropsFixture user="Eric" />
         );
-
-        Resolver.renderToStaticMarkup(element).then((markup) => {
-          assert.equal(markup, expected);
+        go(function* (){
+          let markup= yield take(Resolver.renderToStaticMarkup(element));
+          assert.equal(expected,markup.toString());
           done();
-        }).catch(done);
+        });        
       });
+      
+      it("should resolve a key where the channel closes", function(done) {
+        const element = 
+          <Container component={PropsFixture} resolve={{
+            user: () => 
+              go(function* (){
+                  yield timeout(0);
+              })
+          }} />;
 
+        const expected = React.renderToStaticMarkup(
+          <PropsFixture user={undefined} />
+        );
+        go(function* (){
+          let markup= yield take(Resolver.renderToStaticMarkup(element));
+          console.log(markup.toString());
+          assert.equal(expected,markup.toString());
+          done();
+        });        
+      });
       context("when keys are already defined in props", function() {
         before(function() {
           this.props = { user: "Exists" };
@@ -77,8 +98,7 @@ describe("<Container />", function() {
                 user: function() { throw new Error("`user` should not have been called"); },
               }}
               resolver={this.resolver}
-              {...this.props}
-            />
+              {...this.props}/>
           );
         });
 
@@ -90,11 +110,52 @@ describe("<Container />", function() {
                 user: function() { return "Waiting..."; },
               }}
               resolver={this.resolver}
-              {...this.props}
-            />
+              {...this.props}/>
           );
 
           assert.equal(actual, `<code>${JSON.stringify(this.props)}</code>`);
+        });
+      });
+
+      context("when keys are rehydrating", function() {
+        before(function() {
+          global.__resolver__ = {
+            ".0": {
+              values: {
+                fulfilled: false,
+                rejected: false,
+                user: "Exists",
+              },
+            },
+          };
+        });
+
+        after(function() {
+          delete global.__resolver__;
+        });
+
+        it("should not resolve keys", function() {
+          React.renderToStaticMarkup(
+            <Container
+              component={PropsFixture}
+              resolve={{
+                user: function() { throw new Error("`user` should not have been called"); },
+              }}
+              resolver={this.resolver}/>
+          );
+        });
+
+        it("should render immediately", function() {
+          const actual = React.renderToStaticMarkup(
+            <Container
+              component={PropsFixture}
+              resolve={{
+                user: function() { return "Waiting..."; },
+              }}
+              resolver={this.resolver}/>
+          );
+
+          assert.equal(actual, `<code>${JSON.stringify(global.__resolver__[".0"].values)}</code>`);
         });
       });
     });
@@ -103,21 +164,27 @@ describe("<Container />", function() {
       it("should store state for plain <Container />s", function() {
         React.renderToStaticMarkup(
           <Container resolver={this.resolver}>
-            <PropsFixture {...this.props} />
+            <PropsFixture />
           </Container>
         );
 
-        assert.equal(1, Object.keys(this.resolver.states).length);
+        const ids = Object.keys(this.resolver.states);
+
+        assert.equal(1, ids.length);
+        assert.deepEqual([".0"], ids);
       });
 
       it("should store state for `Resolver.createContainer`s", function() {
         React.renderToStaticMarkup(
           <Container resolver={this.resolver}>
-            <PropsFixtureContainer {...this.props} />
+            <PropsFixtureContainer />
           </Container>
         );
 
-        assert.equal(2, Object.keys(this.resolver.states).length);
+        const ids = Object.keys(this.resolver.states);
+
+        assert.equal(2, ids.length);
+        assert.deepEqual([".0", ".0.0"], ids);
       });
     });
   });

@@ -1,18 +1,18 @@
 import assert from "assert";
 import React from "react";
-import { Container, Resolver } from "../dist";
+import { Resolver } from "../dist";
+import csp, {chan, alts, take, put, go, timeout} from "../dist/js-csp"; /*eslint no-unused-vars:0 */
 
-import PropsFixture from "./support/PropsFixture";
 import PropsFixtureContainer from "./support/PropsFixtureContainer";
 
 describe("Resolver", function() {
   describe(".renderToString", function() {
     it("should not fail", function(done) {
-      Resolver.renderToString(<PropsFixtureContainer />).then((string) => {
-        assert(string);
-
-        done();
-      }).catch(done);
+        go(function*(){
+            const string = yield Resolver.renderToString(<PropsFixtureContainer />);
+            assert(string);
+            done();
+        });
     });
   });
 });

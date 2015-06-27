@@ -1,16 +1,17 @@
 {
-  "name": "react-resolver",
-  "version": "1.0.0",
-  "description": "Isomorphic library to lazy-load data for React components",
+  "name": "react-resolver-csp",
+  "version": "0.0.4",
+  "description": "Isomorphic library to lazy-load data for React components with csp",
   "main": "dist/index.js",
   "directories": {
     "test": "test"
   },
   "devDependencies": {
-    "babel": "^5.1.4",
+    "babel": "^5.1.13",
     "babel-eslint": "^2.0.2",
+    "cheerio": "^0.19.0",
     "eslint": "^0.19.0",
-    "eslint-plugin-react": "^2.1.0",
+    "eslint-plugin-react": "^2.2.0",
     "jsdom": "^3.1.2",
     "mocha": "^2.2.4",
     "react": "0.13.x"
@@ -19,14 +20,15 @@
     "react": "0.13.x"
   },
   "scripts": {
-    "build": "babel --out-dir dist/ src/",
-    "lint": "eslint src",
+    "build": "babel --stage 0 --out-dir dist/ src/",
+    "lint": "eslint src test",
     "prepublish": "npm run build",
-    "test": "npm run build && mocha"
+    "test": "npm run build && mocha",
+    "debug": "npm run build && mocha --debug-brk"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ericclemmons/react-resolver.git"
+    "url": "git://github.com/gilesbradshaw/react-resolver-csp.git"
   },
   "keywords": [
     "react",
@@ -34,11 +36,12 @@
     "load",
     "resolve"
   ],
-  "author": "Eric Clemmons <eric@smarterspam.com>",
+  "author": "Giles Bradshaw",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ericclemmons/react-resolver/issues"
+    "url": "https://github.com/gilesbradshaw/react-resolver-csp/issues"
   },
-  "homepage": "https://github.com/ericclemmons/react-resolver",
-  "dependencies": {}
+  "homepage": "https://github.com/gilesbradshaw/react-resolver-csp",
+  "dependencies": {
+  }
 }
